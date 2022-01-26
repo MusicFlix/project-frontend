@@ -5,7 +5,7 @@
 MusicFlix is a fast communications message board that allows users to listen, watch, and talk about the current music video being played.
 
 ### It's Simple!!!
-First create an account. Then you have access to and abundant resource of music.
+First create an account. Then you have access to an abundant resource of music.
 Click on the desired music video, press play, and take a chill pill. If desired you can leave comments about the video and talk to other
 users logged in.
 
