@@ -1,15 +1,21 @@
 /* eslint-disable no-tabs */
 import React, { Component, Fragment } from 'react'
-import { Route } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 import { v4 as uuid } from 'uuid'
 
-import AuthenticatedRoute from './components/AuthenticatedRoute/AuthenticatedRoute'
+import Spacer from './components/Header/Spacer'
 import AutoDismissAlert from './components/AutoDismissAlert/AutoDismissAlert'
 import Header from './components/Header/Header'
 import SignUp from './components/auth/SignUp'
 import SignIn from './components/auth/SignIn'
 import SignOut from './components/auth/SignOut'
 import ChangePassword from './components/auth/ChangePassword'
+import { signIn } from './api/auth'
+import Movies from './components/movies/Movies'
+import Movie from './components/movies/Movie'
+import Admin from '../src/components/movies/Admin'
+import AdminMovie from '../src/components/movies/AdminMovie'
+import MovieCreate from './components/movies/MovieCreate'
 
 class App extends Component {
   constructor (props) {
@@ -39,12 +45,25 @@ class App extends Component {
     })
   }
 
+  // automatic sign-in
+  componentDidMount () {
+    const credentials = {
+      email: 'test@class',
+      password: 'test'
+    }
+
+    signIn(credentials)
+      .then(res => this.setUser(res.data.user))
+      .catch(console.error)
+  }
+
   render () {
     const { msgAlerts, user } = this.state
 
     return (
       <Fragment>
 	      <Header user={user} />
+        <Spacer />
 	      {msgAlerts.map((msgAlert) => (
           <AutoDismissAlert
             key={msgAlert.id}
@@ -55,37 +74,57 @@ class App extends Component {
             deleteAlert={this.deleteAlert}
           />
         ))}
-	      <main className='container'>
-	        <Route
-            path='/sign-up'
-            render={() => (
-              <SignUp msgAlert={this.msgAlert} setUser={this.setUser} />
-            )}
-          />
-          <Route
-            path='/sign-in'
-            render={() => (
-              <SignIn msgAlert={this.msgAlert} setUser={this.setUser} />
-            )}
-          />
-          <AuthenticatedRoute
-            user={user}
-            path='/sign-out'
-            render={() => (
-              <SignOut
-                msgAlert={this.msgAlert}
-                clearUser={this.clearUser}
-                user={user}
-              />
-            )}
-          />
-          <AuthenticatedRoute
-            user={user}
-            path='/change-password'
-            render={() => (
-              <ChangePassword msgAlert={this.msgAlert} user={user} />
-            )}
-          />
+	      <main>
+          <Routes>
+	         <Route
+              path='/sign-up'
+              element={
+                <SignUp msgAlert={this.msgAlert} setUser={this.setUser} />
+              }
+            />
+            <Route
+              path='/sign-in'
+              element={
+                <SignIn msgAlert={this.msgAlert} setUser={this.setUser} />
+              }
+            />
+            <Route
+              path='/sign-out'
+              element={
+                <SignOut
+                  msgAlert={this.msgAlert}
+                  clearUser={this.clearUser}
+                  user={user}
+                />
+              }
+            />
+            <Route
+              path='/change-password'
+              element={
+                <ChangePassword msgAlert={this.msgAlert} user={user} />
+              }
+            />
+            <Route
+              path='/movies/:id'
+              element={<Movie user={user} />}/>
+            <Route
+              path='/'
+              element={<Movies />}
+            />
+
+            <Route
+              path='/admin'
+              element={<Admin />}
+            />
+            <Route
+              path='/adminMovie/new'
+              element={<MovieCreate />}
+            />
+            <Route
+              path='/adminMovie/:id'
+              element={<AdminMovie />}
+            />
+          </Routes>
         </main>
       </Fragment>
     )

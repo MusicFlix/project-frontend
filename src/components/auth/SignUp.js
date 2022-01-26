@@ -1,11 +1,13 @@
 import React, { Component } from 'react'
-import { withRouter } from 'react-router-dom'
+// import { withRouter } from 'react-router-dom'
 
 import { signUp, signIn } from '../../api/auth'
 import { signUpSuccess, signUpFailure } from '../AutoDismissAlert/messages'
 
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
+
+import { Navigate } from 'react-router-dom'
 
 class SignUp extends Component {
   constructor (props) {
@@ -14,8 +16,13 @@ class SignUp extends Component {
     this.state = {
       email: '',
       password: '',
-      passwordConfirmation: ''
+      passwordConfirmation: '',
+      navigate: false
     }
+
+    // this.state = {
+    //   navigate: false
+    // }
   }
 
 handleChange = (event) =>
@@ -26,7 +33,7 @@ handleChange = (event) =>
 onSignUp = (event) => {
   event.preventDefault()
 
-  const { msgAlert, history, setUser } = this.props
+  const { msgAlert, setUser } = this.props
 
   signUp(this.state)
     .then(() => signIn(this.state))
@@ -38,7 +45,11 @@ onSignUp = (event) => {
         variant: 'success'
       })
     )
-    .then(() => history.push('/'))
+    .then(() => {
+      this.setState({
+        navigate: true
+      })
+    })
     .catch((error) => {
       this.setState({ email: '', password: '', passwordConfirmation: '' })
       msgAlert({
@@ -51,6 +62,10 @@ onSignUp = (event) => {
 
 render () {
   const { email, password, passwordConfirmation } = this.state
+
+  if (this.state.navigate) {
+    return <Navigate to='/' />
+  }
 
   return (
     <div className='row'>
@@ -98,4 +113,4 @@ render () {
 }
 }
 
-export default withRouter(SignUp)
+export default SignUp
